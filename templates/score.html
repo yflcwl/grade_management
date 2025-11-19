@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生成绩展示</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/score.css') }}">
+</head>
+<body>
+    <!-- 顶部渐变区域 -->
+    <div class="header">
+        <div class="header-content">
+            <div class="user-info">
+                <div class="avatar">
+                    <!-- 头像图片 -->
+                    <div class="avatar-placeholder">🎓</div>
+                </div>
+                <div class="welcome-text">
+                    {% if error %}
+                    <h1>成绩查询</h1>
+                    {% else %}
+                    <h1>欢迎：{{ student_info.姓名 }} 同学</h1>
+                    <p>学号：{{ student_id }} | 成绩管理系统</p>
+                    {% endif %}
+                </div>
+            </div>
+            <a href="{{ url_for('logoff') }}" class="btn">退出登录</a>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% else %}
+        <!-- 学生信息卡片 -->
+        <div class="student-info-card">
+            <h3>学生基本信息</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">学号：</span>
+                    <span class="info-value">{{ student_id }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">姓名：</span>
+                    <span class="info-value">{{ student_info.姓名 }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">专业：</span>
+                    <span class="info-value">计算机科学与技术</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">年级：</span>
+                    <span class="info-value">大三</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 成绩统计卡片 -->
+       <!-- <div class="card">
+            <h2>📈 成绩统计</h2>
+            <div class="stats-grid">
+                {% set subject_scores = [] %}
+                {% for subject, score in student_info.items() %}
+                    {% if subject != '姓名' %}
+                        {% set _ = subject_scores.append(score) %}
+                    {% endif %}
+                {% endfor %}
+                {% set average = subject_scores | sum / subject_scores | length %}
+                {% set max_score = subject_scores | max %}
+                {% set min_score = subject_scores | min %}
+
+                <div class="stat-card">
+                    <div class="stat-value">{{ "%.1f"|format(average) }}</div>
+                    <div class="stat-label">平均分</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ max_score }}</div>
+                    <div class="stat-label">最高分</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ min_score }}</div>
+                    <div class="stat-label">最低分</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ subject_scores | length }}</div>
+                    <div class="stat-label">科目数</div>
+                </div>
+            </div>
+        </div>-->
+
+        <div class="card">
+            <h2>📊 本学期成绩</h2>
+            <table class="grades-table">
+                <thead>
+                    <tr>
+                        <th>科目</th>
+                        <th>成绩</th>
+                        <th>科目</th>
+                        <th>成绩</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set subjects = [] %}
+                    {% for subject, score in student_info.items() %}
+                        {% if subject != '姓名' %}
+                            {% set _ = subjects.append((subject, score)) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for i in range(0, subjects|length, 2) %}
+                    <tr>
+                        {% for j in range(2) %}
+                            {% if i + j < subjects|length %}
+                                <td class="subject">{{ subjects[i + j][0] }}</td>
+                                <td class="score">{{ subjects[i + j][1] }}</td>
+                            {% else %}
+                                <td class="subject">-</td>
+                                <td class="score">-</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 底部渐变区域 -->
+    <div class="footer">
+        <div class="footer-content">
+            <p>学生成绩管理系统 © 2024 版权所有</p>
+            <p>设计用于展示学生成绩与个人信息</p>
+        </div>
+    </div>
+</body>
+</html>
